@@ -91,36 +91,41 @@ std::ostream& operator<<(std::ostream& out, const Connection& c) {
 
 // STUDENT TODO: IMPLEMENT
 void Graph::updateNode(int id, NodeInfo n) {
-    if (true /* stub condition: change this to the correct condition*/) {
+    if (!(id >= 0 && id < nodes.size())) {
         cout << "Attempting to update node with id: " << id << " but node does not exist" << endl;
         return;
     }
-
-    return; //stub
+    *(nodes.at(id)) = n;
 }
 
 // STUDENT TODO: IMPLEMENT
 NodeInfo* Graph::getNode(int id) const {
-    return nullptr; //stub
+    return nodes.at(id); 
 }
 
 // STUDENT TODO: IMPLEMENT
 void Graph::updateConnection(int v, int u, double w) {
-    if (true /* stub condition: change this to the correct condition*/) {
+    if (v >= 0 && v < adjacencyList.size()) {
         cerr << "Attempting to update connection between " << v << " and " << u << " with weight " << w << " but " << v << " does not exist" << endl;
         exit(1);
     }
-    if (true /* stub condition: change this to the correct condition*/) {
+    if (u >= 0 && u < adjacencyList.size()) {
         cerr << "Attempting to update connection between " << v << " and " << u << " with weight " << w << " but " << u << " does not exist" << endl;
         exit(1);
     }
     
-    return; //stub
+    adjacencyList.at(v)[u].weight = w;
 }
 
 // STUDENT TODO: IMPLEMENT
 void Graph::clear() {
-    return; //stub
+    for(NodeInfo* p: nodes){
+        if(p) delete p;
+    }
+    nodes.clear();
+    
+    size = 0;
+
 }
 
 

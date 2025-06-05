@@ -42,6 +42,7 @@ class NeuralNetwork : public Graph {
         // TODO: Neural Network Implementations
         // Flow data instance into the neural network and compute the predicted value. 
         std::vector<double> predict(DataInstance instance);
+        std::vector<double> predict(const std::vector<double>& input);
         // Apply accumumated gradients to every weight and every bias
         bool update();
 
