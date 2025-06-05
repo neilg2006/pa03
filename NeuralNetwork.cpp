@@ -103,7 +103,7 @@ vector<double> NeuralNetwork::predict(DataInstance instance) {
 }
 // STUDENT TODO: IMPLEMENT
 bool NeuralNetwork::contribute(double y, double p) {
-    contributions.clear()
+    contributions.clear();
 
     double incomingContribution = 0;
     double outgoingContribution = 0;
