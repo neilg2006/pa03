@@ -14,6 +14,7 @@ void NeuralNetwork::eval() {
 // STUDENT TODO: IMPLEMENT
 void NeuralNetwork::train() {
     evaluating = false;
+    batchSize  = 0;
 }
 
 // STUDENT TODO: IMPLEMENT
@@ -43,6 +44,9 @@ vector<int> NeuralNetwork::getOutputNodeIds() const {
 
 
 vector<double> NeuralNetwork::predict(DataInstance instance) {
+    flush(); 
+
+    
 
     vector<double> input = instance.x;
 
@@ -61,7 +65,7 @@ vector<double> NeuralNetwork::predict(DataInstance instance) {
     for (int i = 0; i < inputNodeIds.size(); ++i) {
         int inId = inputNodeIds.at(i);
         NodeInfo* inNode = nodes.at(inId);
-        inNode->postActivationValue = input.at(i); 
+        inNode->preActivationValue = input.at(i); 
         enqueued[inId] = true;
         q.push(inId);
     }
@@ -70,7 +74,11 @@ vector<double> NeuralNetwork::predict(DataInstance instance) {
         int curr = q.front();
         q.pop();
 
+       
+  
         visitPredictNode(curr);
+
+    
 
         for (auto& kv : adjacencyList.at(curr)) {
             const Connection& c = kv.second;
@@ -97,7 +105,7 @@ vector<double> NeuralNetwork::predict(DataInstance instance) {
         flush();
     } else {
         batchSize++;
-        contribute(instance.y, output.at(0));
+        contribute(instance.y, output.at(0));   
     }
     return output;
 }
@@ -133,7 +141,7 @@ double NeuralNetwork::contribute(int nodeId, const double& y, const double& p) {
         for (auto &kv : adjacencyList.at(nodeId)) {
             Connection &c = const_cast<Connection&>(kv.second);
             double childContribution = contribute(c.dest, y, p);
-            visitContributeNeighbor(c, childContribution, outgoingContribution);
+            visitContributeNeighbor(c, childContribution, outgoingContribution); //call with value
         }
     }
 
