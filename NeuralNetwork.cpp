@@ -117,11 +117,21 @@ bool NeuralNetwork::contribute(double y, double p) {
     double outgoingContribution = 0;
     NodeInfo* currNode = nullptr;
 
-    int outId = outputNodeIds.at(0);
-    double outContribution = contribute(outId, y, p);
-    contributions[outId] = outContribution;
+    for(int i = 0; i < inputNodeIds.size(); i++){
+        for(auto& n: adjacencyList[inputNodeIds[i]]){
+            
+            if(contributions.count(n.first)){
+                incomingContribution = contributions[n.first];
+            }
 
-
+            else{
+                incomingContribution = contribute(n.first, y, p);
+                contributions [n.first] = incomingContribution;
+            }
+            visitContributeNeighbor(n.second, incomingContribution, outgoingContribution);
+        }
+    }
+    
     flush();
 
     return true;
@@ -133,25 +143,28 @@ double NeuralNetwork::contribute(int nodeId, const double& y, const double& p) {
     double outgoingContribution = 0;
     NodeInfo* currNode = nodes.at(nodeId);
 
-    if (contributions.find(nodeId) != contributions.end()) {
+    if (contributions.count(nodeId)) {
         return contributions[nodeId];
     }
-
-    if (!adjacencyList.at(nodeId).empty()) {
-        for (auto &kv : adjacencyList.at(nodeId)) {
-            Connection &c = const_cast<Connection&>(kv.second);
-            double childContribution = contribute(c.dest, y, p);
-            visitContributeNeighbor(c, childContribution, outgoingContribution); //call with value
+    else{
+        for (auto& nds: adjacencyList[nodeId]){
+            if (contributions.count(nds.first)){
+                incomingContribution = contributions[nds.first];
+            }
+            else{
+                incomingContribution = contribute(nds.first, y, p);
+                contributions[nds.first] = incomingContribution;
+            }
+            visitContributeNeighbor (nds.second, incomingContribution, outgoingContribution);
         }
     }
-
 
     if (adjacencyList.at(nodeId).empty()) {
         outgoingContribution = -1 * ((y - p) / (p * (1 - p)));
     } 
 
     visitContributeNode(nodeId, outgoingContribution);
-    contributions[nodeId] = outgoingContribution;
+    
     return outgoingContribution;
 }
 // STUDENT TODO: IMPLEMENT
